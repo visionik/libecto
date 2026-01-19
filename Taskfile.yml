@@ -1,0 +1,44 @@
+version: '3'
+set: [errexit, nounset, pipefail]
+
+tasks:
+  default:
+    desc: List all tasks
+    cmds: [task --list]
+    silent: true
+
+  build:
+    desc: Build the library (compile check)
+    cmds: [go build ./...]
+
+  test:
+    desc: Run all tests
+    cmds: [go test ./... -v]
+
+  test:coverage:
+    desc: Run tests with coverage (! ≥85%)
+    cmds:
+      - go test ./... -coverprofile=coverage.out -covermode=atomic
+      - go tool cover -func=coverage.out
+
+  test:fuzz:
+    desc: Run fuzz tests
+    cmds:
+      - go test -fuzz=FuzzParseAPIKey -fuzztime=10s
+      - go test -fuzz=FuzzMarkdownToHTML -fuzztime=10s
+
+  fmt:
+    desc: Format code
+    cmds: [gofmt -w .]
+
+  lint:
+    desc: Lint code
+    cmds: [go vet ./...]
+
+  quality:
+    desc: All quality checks
+    deps: [fmt, lint, test]
+
+  check:
+    desc: Pre-commit checks (! run before commits)
+    deps: [fmt, lint, test:coverage]
