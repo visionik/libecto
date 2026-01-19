@@ -1,6 +1,6 @@
 # libecto
 
-Go library for the Ghost Admin API.
+Go library for the https://ghost.io Admin API.
 
 ## Installation
 
